@@ -1049,12 +1049,18 @@ function tether(c,stamp,img,g,tip){
  const p=g.player,m=g.captured,t=g.time,face=p.bellFace||p.face;
  const form=m?species[m.kind].skill:p.form,s=styles[form],k=m?m.pull:0;
  const start=m?point(m):{x:tip.x+face*97,y:tip.y-5};
- if(form==='none'){
+ if(p.form==='none'){
   for(let i=0;i<5;i++){
-   const u=(t*1.15+i/5)%1,b=filament(start,tip,u,t,i*2.4,.5);
-   starMagic.spark(c,img,b.x,b.y,9+8*u,t+i,-.24,Math.sin(Math.PI*u)*.88);
+   const u=(t*(m?1.48:1.15)+i/5)%1,b=filament(start,tip,u,t,i*2.4,k);
+   const alpha=Math.sin(Math.PI*u)*.88;
+   if(m){
+    const a=filament(start,tip,Math.max(0,u-.06),t,i*2.4,k),dir=b.x<a.x?-1:1;
+    const angle=Math.atan2(b.y-a.y,Math.max(.01,Math.abs(b.x-a.x)));
+    ink(c,stamp,img,'starComet'+(Math.floor(t*10)+i)%4,b.x,b.y,15+10*u,dir,angle,alpha,.69,.49);
+   }else starMagic.spark(c,img,b.x,b.y,9+8*u,t+i,-.24,alpha);
   }
-  starMagic.spark(c,img,tip.x,tip.y,23,t,-.16,.97);return;
+  if(m)ink(c,stamp,img,form+'Wisp',start.x,start.y,17*(1-k),face,-.18,.72*(1-k));
+  starMagic.spark(c,img,tip.x,tip.y,23+12*k,t,-.16,.97);return;
  }
  const brightness=m?1:.56;
  if(m){
@@ -1461,9 +1467,9 @@ function source(g,tip,bell){
   return {star:p.form==='none',x:tip.x,y:tip.y-4-7*k,face:p.chargeFace,width:63+49*k,
    strength:(.19+.34*k)*(.91+.09*Math.sin(g.time*11))};
  }
+ if(p.bell&&bell&&p.form==='none')return {star:true,x:bell.x,y:bell.y-2,face:p.bellFace,width:79,strength:.25+.20*p.pull};
  if(p.bell&&bell&&(g.captured?species[g.captured.kind].skill==='fire':p.form==='fire'))
   return {x:bell.x,y:bell.y-2,face:p.bellFace,width:76,strength:.22+.17*p.pull};
- if(p.bell&&bell&&!g.captured&&p.form==='none')return {star:true,x:bell.x,y:bell.y-2,face:p.bellFace,width:79,strength:.25};
  let picked=null,best=.025;
  for(const f of g.spellEffects){
   if((f.kind!=='fire'&&f.kind!=='none')||f.age>=.31||(f.type!=='release'&&f.type!=='impact'))continue;
