@@ -669,53 +669,84 @@ module.exports = {
   "rushEmber1": [68, 1091, 56, 56],
   "rushSpark0": [132, 1091, 56, 56],
   "rushSpark1": [196, 1091, 56, 56],
-  "starAir": [620, 1503, 112, 112],
-  "starBloom0": [620, 464, 240, 240],
-  "starBloom1": [868, 464, 240, 240],
-  "starBloom2": [1116, 464, 240, 240],
-  "starBloom3": [1364, 464, 240, 240],
-  "starBow": [620, 880, 568, 223],
-  "starChipA": [620, 1412, 76, 76],
-  "starChipB": [704, 1412, 76, 83],
-  "starComet0": [620, 140, 128, 128],
-  "starComet1": [756, 140, 128, 128],
-  "starComet2": [892, 140, 128, 128],
-  "starComet3": [1028, 140, 128, 128],
-  "starCurrent": [620, 1297, 320, 107],
-  "starDust": [872, 1412, 76, 63],
-  "starGlint": [788, 1412, 76, 76],
-  "starHeart0": [620, 712, 160, 160],
-  "starHeart1": [788, 712, 160, 160],
-  "starHeart2": [956, 712, 160, 160],
-  "starHeart3": [1124, 712, 160, 160],
-  "starMoonBlue": [196, 1683, 184, 56],
-  "starMoonGold": [4, 1683, 184, 60],
-  "starOrbitAir": [388, 1683, 208, 76],
-  "starPalm0": [620, 4, 128, 128],
-  "starPalm1": [756, 4, 128, 128],
-  "starPalm2": [892, 4, 128, 128],
-  "starPalm3": [1028, 4, 128, 128],
-  "starPlasma0": [620, 276, 180, 180],
-  "starPlasma1": [808, 276, 180, 180],
-  "starPlasma2": [996, 276, 180, 180],
-  "starPlasma3": [1184, 276, 180, 180],
-  "starRide0": [620, 1653, 180, 166],
-  "starRide1": [808, 1653, 180, 166],
-  "starRide2": [996, 1653, 180, 166],
-  "starRide3": [620, 1827, 180, 166],
-  "starRide4": [808, 1827, 180, 166],
-  "starRide5": [996, 1827, 180, 166],
-  "starSeed": [740, 1503, 142, 142],
-  "starTurn0": [4, 1155, 168, 168],
-  "starTurn1": [180, 1155, 168, 168],
-  "starTurn2": [356, 1155, 168, 168],
-  "starTurn3": [4, 1331, 168, 168],
-  "starTurn4": [180, 1331, 168, 168],
-  "starTurn5": [356, 1331, 168, 168],
-  "starTurn6": [4, 1507, 168, 168],
-  "starTurn7": [180, 1507, 168, 168],
-  "starTurn8": [356, 1507, 168, 168],
-  "starWake": [620, 1111, 608, 178],
+  "starAir": [996, 656, 112, 112],
+  "starBloom0": [620, 166, 248, 248],
+  "starBloom1": [876, 166, 248, 248],
+  "starBloom2": [1132, 166, 248, 248],
+  "starBloom3": [1388, 166, 248, 248],
+  "starBow": [620, 422, 360, 226],
+  "starChipA": [620, 656, 86, 86],
+  "starChipB": [714, 656, 86, 86],
+  "starComet0": [1220, 4, 154, 154],
+  "starComet1": [1382, 4, 154, 154],
+  "starComet2": [1544, 4, 154, 154],
+  "starComet3": [1706, 4, 154, 154],
+  "starCurrent": [1116, 656, 256, 60],
+  "starDust": [902, 656, 86, 86],
+  "starGlint": [808, 656, 86, 86],
+  "starMoonBlue": [812, 950, 184, 56],
+  "starMoonGlint": [1220, 950, 76, 76],
+  "starMoonGold": [620, 950, 184, 60],
+  "starOrbitAir": [1004, 950, 208, 76],
+  "starPalm0": [620, 4, 142, 142],
+  "starPalm1": [770, 4, 142, 142],
+  "starPalm2": [920, 4, 142, 142],
+  "starPalm3": [1070, 4, 142, 142],
+  "starRide0": [620, 776, 180, 166],
+  "starRide1": [808, 776, 180, 166],
+  "starRide2": [996, 776, 180, 166],
+  "starRide3": [1184, 776, 180, 166],
+  "starRide4": [1372, 776, 180, 166],
+  "starRide5": [1560, 776, 180, 166],
+  "starTurn0": [4, 1155, 144, 144],
+  "starTurn1": [156, 1155, 144, 144],
+  "starTurn10": [4, 1307, 144, 144],
+  "starTurn11": [156, 1307, 144, 144],
+  "starTurn12": [308, 1307, 144, 144],
+  "starTurn13": [460, 1307, 144, 144],
+  "starTurn14": [612, 1307, 144, 144],
+  "starTurn15": [764, 1307, 144, 144],
+  "starTurn16": [916, 1307, 144, 144],
+  "starTurn17": [1068, 1307, 144, 144],
+  "starTurn18": [1220, 1307, 144, 144],
+  "starTurn19": [1372, 1307, 144, 144],
+  "starTurn2": [308, 1155, 144, 144],
+  "starTurn20": [4, 1459, 144, 144],
+  "starTurn21": [156, 1459, 144, 144],
+  "starTurn22": [308, 1459, 144, 144],
+  "starTurn23": [460, 1459, 144, 144],
+  "starTurn24": [612, 1459, 144, 144],
+  "starTurn25": [764, 1459, 144, 144],
+  "starTurn26": [916, 1459, 144, 144],
+  "starTurn27": [1068, 1459, 144, 144],
+  "starTurn28": [1220, 1459, 144, 144],
+  "starTurn29": [1372, 1459, 144, 144],
+  "starTurn3": [460, 1155, 144, 144],
+  "starTurn30": [4, 1611, 144, 144],
+  "starTurn31": [156, 1611, 144, 144],
+  "starTurn32": [308, 1611, 144, 144],
+  "starTurn33": [460, 1611, 144, 144],
+  "starTurn34": [612, 1611, 144, 144],
+  "starTurn35": [764, 1611, 144, 144],
+  "starTurn36": [916, 1611, 144, 144],
+  "starTurn37": [1068, 1611, 144, 144],
+  "starTurn38": [1220, 1611, 144, 144],
+  "starTurn39": [1372, 1611, 144, 144],
+  "starTurn4": [612, 1155, 144, 144],
+  "starTurn40": [4, 1763, 144, 144],
+  "starTurn41": [156, 1763, 144, 144],
+  "starTurn42": [308, 1763, 144, 144],
+  "starTurn43": [460, 1763, 144, 144],
+  "starTurn44": [612, 1763, 144, 144],
+  "starTurn45": [764, 1763, 144, 144],
+  "starTurn46": [916, 1763, 144, 144],
+  "starTurn47": [1068, 1763, 144, 144],
+  "starTurn5": [764, 1155, 144, 144],
+  "starTurn6": [916, 1155, 144, 144],
+  "starTurn7": [1068, 1155, 144, 144],
+  "starTurn8": [1220, 1155, 144, 144],
+  "starTurn9": [1372, 1155, 144, 144],
+  "starWake": [988, 422, 608, 146],
   "stoneRushWake": [4, 717, 448, 150],
   "windRushWake": [4, 559, 448, 150]
 };
@@ -2015,6 +2046,7 @@ class Game{
         this.events.push('chargeReady');
       }
       if(before<superTime&&p.charge>=superTime){
+        if(p.form==='none')p.fullStarAt=this.time;
         this.events.push('superReady');
         this.addPopup(p.x,p.y-94,p.form==='none'?'群星就绪':'极光蓄满',abilities[p.form].color,'#312146',.70,true);
       }
@@ -2195,7 +2227,7 @@ class Game{
     const radius=quakeSpan(wave);
     const reached=(x,pad=0)=>x>=left&&x<=left+w&&Math.abs(x-wave.x)<=radius+pad;
     for(const gate of this.gates)if(!this.gateOpen(gate)&&gate.type==='stone'&&Math.abs(gate.y-y)<24&&reached(gate.x))this.openGate(gate);
-    for(const m of this.monsters)if(!m.hidden&&Math.abs(m.y-y)<(wave.super?150:105)&&reached(m.x)&&!this.barrierBetween(wave.x,m.x))this.hitMonster(m,sign(m.x-wave.x),true);
+    for(const m of this.monsters)if(!m.hidden&&Math.abs(m.y-y)<(wave.super?150:105)&&reached(m.x)&&!this.barrierBetween(wave.x,m.x))this.hitMonster(m,sign(m.x-wave.x),true,'shot','stone');
     for(let i=this.enemyShots.length-1;i>=0;i--){
       const h=this.enemyShots[i];
       if((h.kind==='cinder'||h.kind==='spore')&&Math.abs(h.y-(y-24))<85&&reached(h.x,14)){this.enemyShots.splice(i,1);this.clashHazard(h.x,h.y,sign(h.x-wave.x));}
@@ -2224,7 +2256,7 @@ class Game{
           this.pulledStars.set(i,{x,y,called:true});
       });
     }
-    for(const m of this.monsters)if(m.hidden<=0&&m.appear<=0&&inside(m.x,m.y-18))this.hitMonster(m,m.x===f.x?f.face:sign(m.x-f.x),true);
+    for(const m of this.monsters)if(m.hidden<=0&&m.appear<=0&&inside(m.x,m.y-18))this.hitMonster(m,m.x===f.x?f.face:sign(m.x-f.x),true,'shot',f.kind);
     if(this.boss&&inside(this.boss.x,this.boss.y-70))this.castHitsBoss(f.field,f.power);
   }
   openGate(gate=this.level.gate){
@@ -2238,14 +2270,17 @@ class Game{
     nova.scatter(this,{type:'impact',kind:gate.type,x:gate.x,y:gate.y-50,face:this.player.face,heavy:true,super:true,seed:++this.spellSeed*8191});
     this.say({fire:'枯藤化成了金色飞灰，石拱后的路亮了。',wind:'风标转动了！跳入风道，按住跳跃滑翔过桥。',stone:'石壁裂开了，露米照出一条旧矿道。'}[gate.type],4);this.persist();
   }
-  hitMonster(m,dir=this.player.face,heavy=false,source='shot'){
+  hitMonster(m,dir=this.player.face,heavy=false,source='shot',hitForm=this.player.form){
     if(m.hidden>0||(m.appear>0&&source!=='dash'))return;
     const id=creatureFrame(m),face=m.pull?(m.x>this.player.x?-1:1):m.face,kind=species[m.kind];
     const isHostile=!!(kind.hostile||m.pattern);
-    this.recoils.push({id,kind:m.kind,x:m.x,y:m.y,curX:m.x,curY:m.y,face,angle:creatureAngle(m,id),size:1-.84*resonance.smooth(m.drawIn),dir,heavy,freeze:heavy?.095:.05,isHostile,age:0,life:heavy?.72:.42});
+    this.recoils.push({id,kind:m.kind,hitForm,x:m.x,y:m.y,curX:m.x,curY:m.y,face,angle:creatureAngle(m,id),size:1-.84*resonance.smooth(m.drawIn),dir,heavy,freeze:heavy?.095:.05,isHostile,age:0,life:heavy?.72:.42});
     if(this.recoils.length>12)this.recoils.shift();
-    this.discover(m.kind);this.burst(m.x,m.y-20,kind.color,heavy?20:13);this.burst(m.x,m.y-20,'#fff5c0',heavy?10:5);
-    this.addRing(m.x,m.y-20,5,heavy?42:32,kind.color,'#fff8d2',.21,.72,dir*.22,2);
+    this.discover(m.kind);
+    if(hitForm!=='none'){
+      this.burst(m.x,m.y-20,kind.color,heavy?20:13);this.burst(m.x,m.y-20,'#fff5c0',heavy?10:5);
+      this.addRing(m.x,m.y-20,5,heavy?42:32,kind.color,'#fff8d2',.21,.72,dir*.22,2);
+    }
     if(isHostile){
       this.events.push('enemyPop');
       if(source==='bowl')this.addCombo(m.x,m.y-36,'★ 撞飞连锁! ★','#ff9ee6');
@@ -2267,11 +2302,12 @@ class Game{
           if(m.hidden>0||m.appear>0||!(species[m.kind].hostile||m.pattern))continue;
           if(Math.abs(m.x-r.curX)<40&&Math.abs(m.y-r.curY)<52&&!this.barrierBetween(r.x,m.x)){
             this.events.push('bowling');this.punch(m.x,m.y-18,r.dir,4.5,.26,.048);
-            this.hitMonster(m,r.dir,true,'bowl');
+            this.hitMonster(m,r.dir,true,'bowl',r.hitForm);
           }
         }
       }
       if(r.age<r.life)alive.push(r);
+      else if(r.hitForm==='none')this.markSpell('fade','none',r.curX,r.curY-18,r.dir,false);
       else{
         const col=species[r.kind]?.color||'#ffe69c';
         this.burst(r.curX,r.curY-18,col,r.heavy?18:10);this.burst(r.curX,r.curY-18,'#fff8d2',6);
@@ -2316,7 +2352,7 @@ class Game{
         if(Math.abs(m.x-p.x)<42&&Math.abs((m.y-18)-(p.y-18))<44){
           p.inv=Math.max(p.inv,.22);
           this.markSpell('impact','stone',m.x,m.y-14,sign(m.x-p.x)||p.face,true);
-          this.hitMonster(m,sign(m.x-p.x)||p.face,true,'dash');
+          this.hitMonster(m,sign(m.x-p.x)||p.face,true,'dash','stone');
         }
       }
     }
@@ -2442,7 +2478,7 @@ class Game{
       if(shot.hit)continue;
       for(const m of this.monsters){
         if(m.hidden>0||m.appear>0||!crosses(m.x,shot.super?52:shot.heavy?38:22)||Math.abs(shot.y-(m.y-18))>(shot.super?81:shot.heavy?62:38)||this.barrierBetween(prev,m.x))continue;
-        this.hitMonster(m,sign(shot.vx),shot.heavy);this.boltBurst(shot,'impact',m.x,m.y-18);shot.contacted=true;
+        this.hitMonster(m,sign(shot.vx),shot.heavy,'shot',shot.kind);this.boltBurst(shot,'impact',m.x,m.y-18);shot.contacted=true;
         if(!shot.heavy){shot.hit=true;head.x=m.x;break;}
       }
       if(!shot.hit&&this.boss&&crosses(this.boss.x,49)&&Math.abs(shot.y-(this.boss.y-70))<94){
@@ -2687,7 +2723,7 @@ function hud(c,g,img,hot,v,input){
  const p=g.player,hpPop=g.hpPulse>0?1+.22*Math.sin(g.hpPulse/.36*Math.PI):1;
  for(let i=0;i<3;i++)icon(c,'heart',41+i*24,41,21*(i<p.hp?hpPop:1),i<p.hp?'#ff9c97':'#75657e');
  line(c,[108,32,108,51],'#a08b9d');
- if(p.form==='none')sprite(c,img.atlas,'starPalm0',129,55,30);
+ if(p.form==='none')sprite(c,img.atlas,'starPalm3',129,55,30);
  else sprite(c,img.atlas,p.form+'Wisp',129,52,24);
  label(c,abilities[p.form].name,145,42,15,cream);icon(c,'right',211,41,12,cream);
  hot.push({id:'abilityBook',x:a.left+109,y:top+16,w:117,h:51,label:'切换属性'});
@@ -3934,13 +3970,14 @@ function struckCreatures(c,g,imgs){
   const rx=r.curX,ry=r.curY;
   const jitterX=r.age<freeze?Math.sin(r.age*170)*(r.heavy?5.5:3.5):0;
   const jitterY=r.age<freeze?Math.cos(r.age*140)*(r.heavy?3.2:2):0;
-  kirbyFX.recoilJuice(c,r,u,col);
+  if(r.hitForm==='none')starMagic.recoil(c,imgs.atlas,r,u);
+  else kirbyFX.recoilJuice(c,r,u,col);
   const h=frames[r.id][3]*creatureScale[family]*r.size,contact=r.age<freeze;
   const spin=r.dir*u*(r.heavy?7.45:3.6),stretch=contact?-.19:.14*Math.sin(Math.PI*u);
   c.save();c.globalAlpha=1-clamp01((u-.80)/.20);
   c.translate(rx+jitterX,ry-h*.5+jitterY);c.rotate(spin);c.scale(1-stretch,1+stretch);
   creatureSprite(c,imgs.atlas,r.id,family,0,h*.5,h*(r.heavy?1.14:1.06),r.face,r.angle);
-  if(!contact&&r.heavy&&u<.76){
+  if(!contact&&r.heavy&&u<.76&&r.hitForm!=='none'){
    for(let i=0;i<2;i++){const a=u*11+i*Math.PI;star(c,Math.cos(a)*h*.47,-h*.54+Math.sin(a)*4,3.7-i,'#fff4a2',a);}
   }
   c.restore();
@@ -4711,6 +4748,8 @@ const {heavyTime,superTime} = require('./motion');
 const {bloomAxes} = require('./spell-range');
 const wave = require('./dash-wave');
 const grainArt = ['starChipA','starChipB','starGlint','starDust'];
+const turnCount = Object.keys(frames).filter(id=>id.startsWith('starTurn')).length;
+const turnPeriod = 2.4;
 
 function picture(c,atlas,id,x,y,width,height,face=1,angle=0,alpha=1,ax=.5,ay=.5) {
   if (!atlas?.lights || alpha<.008 || width<=0 || height<=0) return;
@@ -4720,13 +4759,19 @@ function picture(c,atlas,id,x,y,width,height,face=1,angle=0,alpha=1,ax=.5,ay=.5)
 }
 const phase = time => Math.floor(time*10)%4;
 function spark(c,atlas,x,y,size,time,angle,alpha) {
-  picture(c,atlas,'starPalm'+phase(time),x,y,size,size,1,angle,alpha);
+  const gleam=.82+.18*Math.cos(time*8.6);
+  picture(c,atlas,'starGlint',x,y,size*gleam,size*gleam,1,angle,alpha,.515,.435);
+}
+
+function turningStar(c,atlas,x,y,size,age,face,alpha=1) {
+  const index=Math.floor(Math.max(0,age)*turnCount/turnPeriod)%turnCount;
+  picture(c,atlas,'starTurn'+index,x,y,size,size,face,0,alpha);
 }
 
 // These are independently painted silhouettes. Broad light can overlap while their cores move.
-function cels(c,atlas,prefix,position,loop,x,y,w,h,face,angle,alpha,count=4) {
+function cels(c,atlas,prefix,position,x,y,w,h,face,angle,alpha) {
   const step=Math.floor(position),mix=position-step;
-  const a=loop?step%count:Math.min(step,count-1),b=loop?(step+1)%count:Math.min(step+1,count-1);
+  const a=Math.min(step,3),b=Math.min(step+1,3);
   picture(c,atlas,prefix+a,x,y,w,h,face,angle,alpha*(1-mix));
   if(mix>.005)picture(c,atlas,prefix+b,x,y,w,h,face,angle,alpha*mix);
 }
@@ -4734,6 +4779,21 @@ function cels(c,atlas,prefix,position,loop,x,y,w,h,face,angle,alpha,count=4) {
 function grain(c,atlas,variant,x,y,size,age,angle,alpha) {
   const turning=variant<2 ? .45+.55*Math.abs(Math.cos(angle+age*5.4)) : 1;
   picture(c,atlas,grainArt[variant],x,y,size*turning,size,1,angle,alpha);
+}
+
+function recoil(c,atlas,r,u){
+  const x=r.curX-r.dir*12,y=r.curY-19;
+  const fade=1-smooth((u-.48)/.52);
+  if(r.age<r.freeze){
+    spark(c,atlas,x,y,r.heavy?55:34,r.age,0,1);
+    return;
+  }
+  picture(c,atlas,'starMoonBlue',x,y,51,19,r.dir,-.12,fade*.88,.816,.50);
+  for(let i=0;i<3;i++){
+    const distance=(9+25*u)*(i+1);
+    grain(c,atlas,i,x-r.dir*distance,y+Math.sin(i*2+r.age*6)*10,
+      (i===2?20:17)*(1-.28*u),r.age,i*1.7+r.age*3,fade);
+  }
 }
 
 function satellites(c,atlas,x,y,span,t,face,energy,front){
@@ -4747,7 +4807,7 @@ function satellites(c,atlas,x,y,span,t,face,energy,front){
     const xx=x+face*dx,yy=y+dy;
     picture(c,atlas,i===1?'starMoonBlue':'starMoonGold',xx,yy,size,size*.43,
       face,angle,energy*closeness*twinkle,.816,i===1?.50:.526);
-    picture(c,atlas,'starGlint',xx,yy,size*.22,size*.22,1,-.12,energy*twinkle*.82);
+    picture(c,atlas,'starMoonGlint',xx,yy,size*.22,size*.22,1,-.12,energy*twinkle*.82);
   }
 }
 
@@ -4770,14 +4830,14 @@ function palm(c,atlas,p,tip,t,front) {
   if(p.charge>=heavyTime)picture(c,atlas,'starOrbitAir',cx,cy,span*1.06,span*.66,face,-.18,.43+.22*focus);
   if(full){
     satellites(c,atlas,cx,cy,span,t,face,open,false);
-    const size=49+90*open+14*flare+6*beat;
-    const spin=t*8.5,step=Math.floor(spin);
-    // Hold each registered silhouette, then blend the brief sweep into the next painted facet.
-    const settled=step+smooth((spin-step-.60)/.40);
-    cels(c,atlas,'starTurn',settled,true,cx,cy,size,size,face,t*1.42,1,9);
-    const glitter=.5+.5*Math.sin(t*7.8),r=size*.19;
-    picture(c,atlas,'starGlint',cx+face*r*Math.cos(t*2.6),cy+r*Math.sin(t*2.6),9+14*glitter,9+14*glitter,1,-.17,.78*glitter);
-  }else spark(c,atlas,cx,cy,span,t,0,1);
+    const age=Math.max(0,t-(p.fullStarAt??0)),size=103+52*open+12*flare+3*beat;
+    turningStar(c,atlas,cx,cy,size,age,face);
+    const yaw=age*Math.PI*2/turnPeriod,glitter=(.5+.5*Math.cos(yaw*3))**3;
+    spark(c,atlas,cx+face*size*.18*Math.cos(yaw),cy-size*.08,9+17*glitter,t,0,.85*glitter);
+  }else{
+    const progress=3*Math.min(1,p.charge/superTime),size=39+32*gather+32*focus+2*beat;
+    cels(c,atlas,'starPalm',progress,cx,cy,size,size,face,0,1);
+  }
   const count=full?6:p.charge>=heavyTime?6:4;
   for(let i=0;i<count;i++){
     const u=(t*(.85+i*.043)+i*.381)%1,a=i*2.399+t*.75+(full?u:-u)*1.4;
@@ -4791,7 +4851,7 @@ function palm(c,atlas,p,tip,t,front) {
 function projectile(c,atlas,shot) {
   const face=Math.sign(shot.vx),prev=shot.path[Math.max(0,shot.path.length-2)];
   const angle=Math.atan2(shot.y-prev.y,Math.max(.1,Math.abs(shot.x-prev.x)));
-  const size=(shot.auxiliary?50:shot.super?116:shot.heavy?79:44)*(.80+.20*smooth(shot.age/.07));
+  const size=(shot.auxiliary?76:shot.super?155:shot.heavy?109:67)*(.80+.20*smooth(shot.age/.07));
   picture(c,atlas,'starAir',shot.x,shot.y,size*1.18,size*.91,face,angle,shot.auxiliary?.55:.81);
   picture(c,atlas,'starComet'+phase(shot.age),shot.x,shot.y,size,size,face,angle,shot.auxiliary?.91:1,.69,.49);
 }
@@ -4805,7 +4865,7 @@ function burst(c,atlas,f) {
   if(f.type==='release'){
     const size=(f.super?139:f.heavy?88:38)*(.32+.88*smooth(u/.36));
     picture(c,atlas,'starBloom0',f.x,f.y,size*1.35,size*.89,f.face,-.10,1-smooth(u));
-    if(f.super)picture(c,atlas,'starSeed',f.x,f.y,size*.57,size*.57,f.face,-.16,.90*(1-smooth(u/.78)));
+    if(f.heavy)turningStar(c,atlas,f.x,f.y,size*.63,f.age,f.face,.94*(1-smooth(u/.78)));
     return;
   }
   const [rx,ry]=f.heavy?bloomAxes(f):[28+39*smooth(u/.39),24+25*smooth(u/.39)];
@@ -4817,10 +4877,10 @@ function burst(c,atlas,f) {
   const times=f.heavy?[.088,.25,.59]:[.055,.16,.31];
   const frame=f.age<times[0]?f.age/times[0]:f.age<times[1]?1+(f.age-times[0])/(times[1]-times[0]):
     2+smooth((f.age-times[1])/(times[2]-times[1]));
-  cels(c,atlas,'starBloom',frame,false,f.x,f.y,rx*size,ry*size,f.face,0,fade);
+  cels(c,atlas,'starBloom',frame,f.x,f.y,rx*size,ry*size,f.face,0,fade);
   if(f.heavy&&f.age<.27){
     const lit=1-smooth((f.age-.10)/.17),seed=rx*(.43+.11*lit);
-    picture(c,atlas,'starSeed',f.x,f.y,seed,seed*.86,f.face,.11*f.face,.96*lit);
+    turningStar(c,atlas,f.x,f.y,seed,f.age,f.face,.96*lit);
   }
   if(f.age<.19){
     const flash=1-smooth(f.age/.19),w=(f.super?164:f.heavy?107:47)*(1.16-.39*flash);
@@ -4845,24 +4905,24 @@ function pressure(c,g,atlas) {
   const pulse=.5-.5*Math.cos(r.age*6.4),gain=.59+.41*smooth(r.age/.13)*smooth(p.dash/.17);
   c.save();c.translate(p.x,p.y+shape.originY);c.scale(shape.face,1);c.rotate(shape.angle);
   picture(c,atlas,'starAir',shape.x-5,shape.y,146+19*pulse,117+12*pulse,1,0,.68*gain);
-  picture(c,atlas,'starBow',shape.x,shape.y,shape.width*(1.40+.065*pulse),
-    shape.height*(1.68+.10*pulse),1,0,gain,.816,.563);
-  picture(c,atlas,'starGlint',shape.x,shape.y,38+13*pulse,36+9*pulse,1,-.20,gain*.88);
+  picture(c,atlas,'starBow',shape.x,shape.y,shape.width*(1.39+.065*pulse),
+    shape.height*(1.53+.08*pulse),1,0,gain,.802,.49);
+  turningStar(c,atlas,shape.x,shape.y,61+4*pulse,r.age,1,gain);
+  spark(c,atlas,shape.x,shape.y,28+6*pulse,r.age,0,gain*.82);
   c.restore();
   // Both shoes meet the same animated current. Its core and its air move independently of the rider cel.
   c.save();c.translate(r.x,r.y);c.scale(r.face,1);c.rotate(r.angle);
   picture(c,atlas,'starAir',0,3,148+9*pulse,64+7*pulse,1,0,.88*gain);
   picture(c,atlas,'starCurrent',13,4,140+12*pulse,49+8*pulse,1,-.035,gain,.86,.53);
-  cels(c,atlas,'starPlasma',r.age*5.8,true,-2,5,112,38+5*pulse,1,-.045,.83*gain);
-  cels(c,atlas,'starHeart',r.age*6,true,4,5,64+6*pulse,40+5*pulse,1,-.09,.84*gain);
-  picture(c,atlas,'starGlint',6,4,47+8*pulse,33+6*pulse,1,-.12,gain);
+  turningStar(c,atlas,3,11,35+4*pulse,r.age,1,gain);
+  spark(c,atlas,5,4,41+8*pulse,r.age,0,gain);
   c.restore();
 }
 function launch(c,atlas,f) {
   const u=f.age/f.life,open=smooth(u/.45),size=34+109*open;
   picture(c,atlas,'starBloom'+Math.min(3,Math.floor(u*4)),f.x,f.y-5,size,size*.64,f.face,0,1-smooth(u));
 }
-module.exports={palm,projectile,burst,spark,grain,surfPose,ride,root,pressure,launch};
+module.exports={palm,projectile,burst,spark,grain,recoil,surfPose,ride,root,pressure,launch};
 
 },
 "touch-hud": function(require,module,exports){
@@ -4919,7 +4979,7 @@ function touchHud(c,hot,g,img,v,input={}){
       }
     }else if(progress>0)arc(c,0,0,r-4*u,top,top+tau*Math.min(1,progress),color,3.5*u);
     if(key==='attack'&&img.atlas){
-      sprite(c,img.atlas,p.form==='none'?'starPalm0':p.form+'Charge',0,r*.18,r*.83);
+      sprite(c,img.atlas,p.form==='none'?'starPalm3':p.form+'Charge',0,r*.18,r*.83);
     }else if(key==='dash'&&p.form==='none'&&img.atlas){
       sprite(c,img.atlas,'starComet0',-r*.09,r*.25,r*.98);
     }else if(key==='jump'&&img.atlas){
