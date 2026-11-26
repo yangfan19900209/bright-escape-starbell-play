@@ -669,6 +669,26 @@ module.exports = {
   "rushEmber1": [68, 1091, 56, 56],
   "rushSpark0": [132, 1091, 56, 56],
   "rushSpark1": [196, 1091, 56, 56],
+  "starBloom0": [620, 276, 180, 180],
+  "starBloom1": [808, 276, 180, 180],
+  "starBloom2": [996, 276, 180, 180],
+  "starBloom3": [1184, 276, 180, 180],
+  "starBow": [620, 464, 544, 219],
+  "starComet0": [620, 140, 128, 128],
+  "starComet1": [756, 140, 128, 128],
+  "starComet2": [892, 140, 128, 128],
+  "starComet3": [1028, 140, 128, 128],
+  "starPalm0": [620, 4, 128, 128],
+  "starPalm1": [756, 4, 128, 128],
+  "starPalm2": [892, 4, 128, 128],
+  "starPalm3": [1028, 4, 128, 128],
+  "starRide0": [620, 843, 180, 196],
+  "starRide1": [808, 843, 180, 196],
+  "starRide2": [996, 843, 180, 196],
+  "starRide3": [620, 1047, 180, 196],
+  "starRide4": [808, 1047, 180, 196],
+  "starRide5": [996, 1047, 180, 196],
+  "starWake": [620, 691, 576, 144],
   "stoneRushWake": [4, 717, 448, 150],
   "windRushWake": [4, 559, 448, 150]
 };
@@ -980,6 +1000,7 @@ module.exports = {
 const {species}=require('./levels');
 const {point,smooth}=require('./resonance');
 const phoenix=require('./phoenix-rush');
+const starMagic=require('./star-magic');
 const rushPath=require('./rush-path');
 const {heavyTime,superTime,fireFlameFrame}=require('./motion');
 const {wash,streak,twinkle}=require('./light');
@@ -992,7 +1013,7 @@ const styles={
  wind:{body:'#3bbebc',rim:'#91f3db',pearl:'#eefff1',speed:-1.85},
  stone:{body:'#80b55e',rim:'#e6d992',pearl:'#ffefc5',speed:1.36}
 };
-const crestWidth={wind:146,stone:130,none:123};
+const crestWidth={wind:146,stone:130};
 function ink(c,stamp,img,id,x,y,h,face,angle,opacity,ax=.5,ay=.5){
  if(opacity<.008)return;
  c.save();c.globalAlpha*=opacity;stamp(c,img,id,x,y,h,face,angle,ax,ay);c.restore();
@@ -1028,6 +1049,13 @@ function tether(c,stamp,img,g,tip){
  const p=g.player,m=g.captured,t=g.time,face=p.bellFace||p.face;
  const form=m?species[m.kind].skill:p.form,s=styles[form],k=m?m.pull:0;
  const start=m?point(m):{x:tip.x+face*97,y:tip.y-5};
+ if(form==='none'){
+  for(let i=0;i<5;i++){
+   const u=(t*1.15+i/5)%1,b=filament(start,tip,u,t,i*2.4,.5);
+   starMagic.spark(c,img,b.x,b.y,9+8*u,t+i,-.24,Math.sin(Math.PI*u)*.88);
+  }
+  starMagic.spark(c,img,tip.x,tip.y,23,t,-.16,.97);return;
+ }
  const brightness=m?1:.56;
  if(m){
   let from=start;
@@ -1059,6 +1087,13 @@ function flourish(c,stamp,img,g){
  const f=g.attunement;if(!f)return;
  const age=g.time-f.born;if(age<0||age>=.88)return;
  const s=styles[f.form],p=g.player,x=p.x,y=p.y-32,r=18+59*smooth(age/.58),fade=1-smooth((age-.18)/.70);
+ if(f.form==='none'){
+  for(let i=0;i<5;i++){
+   const angle=age*2+i*tau/5;
+   starMagic.spark(c,img,x+Math.cos(angle)*r,y+Math.sin(angle)*r*.73,13+9*fade,g.time+i,angle*.16,fade);
+  }
+  return;
+ }
  wash(c,x,y-4,r*1.19,r*.94,-.21,s.body,.49*fade);
  wash(c,x,y,r*.9,r*.94,0,s.rim,.37*fade);
  for(let i=0;i<4;i++){
@@ -1134,6 +1169,7 @@ function chargedCrest(c,stamp,img,p,tip,t){
  }
 }
 function palm(c,stamp,img,p,tip,t,front){
+ if(p.form==='none'){starMagic.palm(c,img,p,tip,t,front);return;}
  if(p.form==='fire'){palmFire(c,stamp,img,p,tip,t,front);return;}
  const form=p.form,s=styles[form],face=p.chargeFace||p.face;
  const charge=p.charge,heavy=charge>=heavyTime,full=charge>=superTime;
@@ -1193,11 +1229,11 @@ function rushWake(c,g,img,surface){
 }
 function motionTrails(c,stamp,img,g){
  const p=g.player,t=g.time,s=styles[p.form],rush=p.dash>0,face=rush?p.dashFace:p.face;
- if(rush&&p.form!=='fire'){
+ if(rush&&(p.form==='wind'||p.form==='stone')){
   const gain=Math.min(1,p.dash/.15),beat=Math.sin(t*11.5),y=p.y-26;
   c.save();c.globalAlpha*=gain;
   wash(c,p.x-face*17,y,75,24,-face*.055,s.body,.48);
-  const wake=p.form==='none'?'noneStreak':p.form+'Wake';
+  const wake=p.form+'Wake';
   ink(c,stamp,img,wake,p.x-face*19,y+3,26+3*beat,face,-.045,.68,.90,.54);
   ink(c,stamp,img,wake,p.x-face*31,y+6,18,face,.07,.45,.90,.56);
   const crest=p.form==='stone'?'stoneBolt':p.form+'CrestOpen';
@@ -1232,6 +1268,7 @@ const cues={jump:[72,79],spring:[64,72,84],bell:[84,91],attack:[67,60],slam:[43,
 // The small pickup trill ends before the four-note change of form.
 cues.bellLock=[67,79];cues.chargeReady=[76,88];cues.superReady=[76,80,83,88,95];cues.dash=[79,67];
 cues.dashReady=[72,79,84];
+cues.starCast=[83,90];cues.starVolley=[76,83,88,95];cues.starRide=[72,79,88,91];
 cues.dashHit=[64,76,88];cues.clash=[91,98,103];cues.enemyPop=[60,72,84];cues.bowling=[74,81,88,95];cues.combo=[79,86,91];
 cues.berry=[76,84];cues.ward=[72,79,88];cues.wardBreak=[88,76,67];cues.chime=[67,79,86,91];
 const castingNotes={fireCast:[69,57],windCast:[79,86,91],stoneCast:[45,38]};
@@ -1283,7 +1320,7 @@ function soundEngine(backend){
   if(!unlocked||g.data.muted||g.scene==='pause'||g.scene==='retry'){stop();return;}
   const wanted=g.scene==='play'?(g.boss?'grove':'meadow'):'';
   if(wanted!==current){if(loop)loop.stop();loop=null;current=wanted;if(wanted)loop=backend.play(wanted,true,.55);}
-  for(const cue of cues){if(cue==='start')continue;const v=backend.play(cue,false,.64);if(v){voices.push(v);if(voices.length>8)voices.shift().stop();}}
+  for(const cue of cues){if(cue==='start')continue;const sound=cue==='dash'&&g.player.form==='none'?'starRide':cue;const v=backend.play(sound,false,.64);if(v){voices.push(v);if(voices.length>8)voices.shift().stop();}}
  }
  return {unlock(){try{backend.unlock();unlocked=true;}catch(_){}},tick,stop};
 }
@@ -1408,29 +1445,32 @@ module.exports={extendChapter};
 },
 "character-light": function(require,module,exports){
 'use strict';
-const {fireSurfaceLight}=require('./art-rush');
+const {fireSurfaceLight,starBow}=require('./art-rush');
 const {species}=require('./levels');
 
 // Reuse the incident gold light painted for the phoenix. The actor surface supplies
 // the exact moving silhouette, including crossfading clothes and separately animated boots.
 function source(g,tip,bell){
  const p=g.player;
+ if(p.dash>0&&p.form==='none')return {star:true,x:p.x+37*p.dashFace,y:p.y-43,face:p.dashFace,width:119,
+  strength:.42+.10*Math.sin((g.time-p.dashBorn)*6.4)};
  if(p.dash>0)return {x:p.x+45*p.dashFace,y:p.y-35,face:p.dashFace,width:110,
   strength:.48+.12*Math.sin((g.time-p.dashBorn)*6.8)};
- if(p.charging&&p.form==='fire'&&tip){
+ if(p.charging&&(p.form==='fire'||p.form==='none')&&tip){
   const k=Math.min(1,p.charge/.84);
-  return {x:tip.x,y:tip.y-4-7*k,face:p.chargeFace,width:63+49*k,
+  return {star:p.form==='none',x:tip.x,y:tip.y-4-7*k,face:p.chargeFace,width:63+49*k,
    strength:(.19+.34*k)*(.91+.09*Math.sin(g.time*11))};
  }
  if(p.bell&&bell&&(g.captured?species[g.captured.kind].skill==='fire':p.form==='fire'))
   return {x:bell.x,y:bell.y-2,face:p.bellFace,width:76,strength:.22+.17*p.pull};
+ if(p.bell&&bell&&!g.captured&&p.form==='none')return {star:true,x:bell.x,y:bell.y-2,face:p.bellFace,width:79,strength:.25};
  let picked=null,best=.025;
  for(const f of g.spellEffects){
-  if(f.kind!=='fire'||f.age>=.31||(f.type!=='release'&&f.type!=='impact'))continue;
+  if((f.kind!=='fire'&&f.kind!=='none')||f.age>=.31||(f.type!=='release'&&f.type!=='impact'))continue;
   const distance=Math.hypot(f.x-p.x,f.y-p.y+36),reach=f.super?160:f.heavy?128:92;
   const strength=(1-distance/reach)*(1-f.age/.31)*(f.super?.94:f.heavy?.75:.48);
   if(strength<=best)continue;
-  best=strength;picked={x:f.x,y:f.y,face:f.x>=p.x?1:-1,width:reach,strength};
+  best=strength;picked={star:f.kind==='none',x:f.x,y:f.y,face:f.x>=p.x?1:-1,width:reach,strength};
  }
  return picked;
 }
@@ -1446,7 +1486,8 @@ function draw(c,imgs,p,light,paint){
  dc.translate(light.x,light.y);dc.scale(light.face||1,1);
  const w=light.width;
  dc.globalCompositeOperation='source-in';
- dc.drawImage(imgs.atlas.lights,...fireSurfaceLight,-.86*w,-.51*w,w,w*.90);
+ if(light.star)dc.drawImage(imgs.atlas.lights,...starBow,-.738*w,-.528*w*.88,w,w*.88);
+ else dc.drawImage(imgs.atlas.lights,...fireSurfaceLight,-.86*w,-.51*w,w,w*.90);
  dc.restore();
  c.save();c.globalCompositeOperation='screen';c.globalAlpha*=light.strength;
  c.drawImage(surface,l,t,side,side);c.restore();
@@ -1640,6 +1681,8 @@ function pitch(p){
 // One footprint positions the ImageGen wave and its contact envelope in both directions.
 function shape(p,t){
  const phoenix=p.form==='fire',beat=.5+.5*Math.sin(t*6.8);
+ if(p.form==='none')return {width:238+8*beat,height:132+6*beat,x:57+2*beat,y:-2,
+  angle:pitch(p)*.83,originY:-47,face:p.dashFace};
  const width=(phoenix?290:218)+(phoenix?13:8)*beat;
  const height=(phoenix?(p.ground?136:154):103)+7*Math.sin(t*6.8+.8);
  const x=(phoenix?68:46)+2*beat,y=(phoenix?-13:-2)-2*beat;
@@ -1918,7 +1961,7 @@ class Game{
     this.grace=p.ground?.11:Math.max(0,this.grace-dt);
     if(this.buffer>0&&!p.slam&&(p.ground||this.grace>0||p.jumps<2)){
       if(!p.ground&&this.grace<=0)p.jumps=Math.max(1,p.jumps);
-      if(grounded)this.footprint(p.dash>0&&p.form==='fire'?'fireLift':'launch',p.x,p.y,p.face,.72);
+      if(grounded)this.footprint(p.dash>0&&p.form==='none'?'starLift':p.dash>0&&p.form==='fire'?'fireLift':'launch',p.x,p.y,p.face,.72);
       p.jumps++;p.vy=p.jumps===1?-600:-490;p.launch=.12;p.brake=0;p.ground=false;this.grace=0;this.buffer=0;this.events.push('jump');
       if(p.jumps===2){
         const col=abilities[p.form].color;
@@ -1940,7 +1983,7 @@ class Game{
       }
       if(before<superTime&&p.charge>=superTime){
         this.events.push('superReady');
-        this.addPopup(p.x,p.y-94,'极光蓄满',abilities[p.form].color,'#312146',.70,true);
+        this.addPopup(p.x,p.y-94,p.form==='none'?'群星就绪':'极光蓄满',abilities[p.form].color,'#312146',.70,true);
       }
     }
     if(p.charging&&(input.attackUp||!input.attack)){
@@ -1988,7 +2031,7 @@ class Game{
     const halfStep=Math.floor(p.stride*2);
     advanceTravel(p,p.x-oldX,dt,heldDescent);
     p.walk+=Math.abs(p.x-oldX)*.069;
-    if(p.ground&&p.brake<=0&&Math.abs(p.vx)>100&&Math.floor(p.stride*2)!==halfStep)
+    if(!(p.dash>0&&p.form==='none')&&p.ground&&p.brake<=0&&Math.abs(p.vx)>100&&Math.floor(p.stride*2)!==halfStep)
       this.footprint('step',p.x-sign(p.vx)*5,p.y,sign(p.vx),Math.abs(p.vx)/550);
   }
   footprint(type,x,y,face,size){
@@ -2005,7 +2048,9 @@ class Game{
     p.dash=this.data.dashStars*dashRules.secondsPerStar;p.dashBorn=this.time;p.dashFace=p.face;p.brake=0;
     this.data.dashInProgress=true;this.persist();
     const col=abilities[p.form].color;
-    this.events.push('dash');this.burst(p.x,p.y-25,col,14);
+    this.events.push('dash');
+    if(p.form==='none'){this.footprint('starLift',p.x,p.y,p.face,1);return;}
+    this.burst(p.x,p.y-25,col,14);
     if(p.form==='fire'){
       updateRig(p,heroFrame(p,this.scene,this.time),0,this.time);
       if(grounded)this.footprint('fireLift',p.x,p.y,p.face,1);
@@ -2060,7 +2105,7 @@ class Game{
   attack(heavy,superCast=false,face=this.player.face){
     const p=this.player;if(p.dash>0||p.cool>0)return;
     p.attack=heavy?.38:.23;p.cool=heavy?.48:.26;p.castHeavy=heavy;p.castSuper=!!superCast;p.castFace=face;
-    this.events.push({none:'bell',fire:'fireCast',wind:'windCast',stone:'stoneCast'}[p.form]);
+    this.events.push({none:superCast?'starVolley':'starCast',fire:'fireCast',wind:'windCast',stone:'stoneCast'}[p.form]);
     const skill=p.form;
     if(skill==='stone'&&heavy){
       if(!p.ground){p.slam=true;p.slamSuper=!!superCast;p.slamStartY=p.y;p.vy=superCast?830:760;}
@@ -2078,10 +2123,11 @@ class Game{
     if(superCast){
       const col=abilities[skill].color;
       this.addFlash(col,.30,.24);this.punch(tip.x,tip.y,p.castFace,6.2,.36,.068);
-      this.addRing(tip.x,tip.y,12,115,col,'#fff8d6',.38,.78,p.castFace*.2,5,true);
-      this.addPopup(p.x,p.y-78,{none:'★ 星铃极光! ★',fire:'★ 烈焰凤凰! ★',wind:'★ 苍穹飓风! ★',stone:'★ 星陨巨震! ★'}[skill],col,'#2f1f44',1.2);
+      if(skill!=='none')this.addRing(tip.x,tip.y,12,115,col,'#fff8d6',.38,.78,p.castFace*.2,5,true);
+      this.addPopup(p.x,p.y-78,{none:'群星齐发',fire:'★ 烈焰凤凰! ★',wind:'★ 苍穹飓风! ★',stone:'★ 星陨巨震! ★'}[skill],col,'#2f1f44',1.2);
       for(const side of [-1,1]){
         const extra={x:tip.x,y:tip.y,startY:tip.y,lane,vx:(speed-20)*p.castFace,vy:skill==='wind'?side*155:0,wave:skill==='wind'?0:(skill==='fire'?34:26),phase:side>0?0:Math.PI,age:0,max:reach/speed*.92,kind:skill,heavy:true,super:true,auxiliary:true,power:2,hit:false,contacted:false,origin:p.x,trailDistance:0,trailIndex:0,path:[{x:tip.x,y:tip.y}]};
+        if(skill==='none'){extra.starSide=side;extra.vx=speed*p.castFace;extra.max=reach/speed;}
         extra.cast=cast;this.projectiles.push(extra);
       }
     }
@@ -2138,6 +2184,13 @@ class Game{
   propagateBloom(f){
     const [rx,ry]=bloomAxes(f);
     const inside=(x,y)=>Math.abs(x-f.x)<=rx&&((x-f.x)/rx)**2+((y-f.y)/ry)**2<=1&&!this.barrierBetween(f.x,x);
+    if(f.kind==='none'&&f.super){
+      this.starSpots.forEach(([sx,sy],i)=>{
+        const cur=this.pulledStars.get(i),x=cur?cur.x:sx,y=cur?cur.y:sy;
+        if(!cur?.called&&!this.record.visitStars.includes(i)&&inside(x,y)&&!this.barrierBetween(this.player.x,x))
+          this.pulledStars.set(i,{x,y,called:true});
+      });
+    }
     for(const m of this.monsters)if(m.hidden<=0&&m.appear<=0&&inside(m.x,m.y-18))this.hitMonster(m,m.x===f.x?f.face:sign(m.x-f.x),true);
     if(this.boss&&inside(this.boss.x,this.boss.y-70))this.castHitsBoss(f.field,f.power);
   }
@@ -2240,11 +2293,12 @@ class Game{
     this.starSpots.forEach(([sx,sy],i)=>{
       if((Math.abs(sx-p.x)>175&&!this.pulledStars.has(i))||this.record.visitStars.includes(i))return;
       const cur=this.pulledStars.get(i);
-      if(pulling){
+      if(cur?.called&&this.barrierBetween(cur.x,tip.x))cur.called=false;
+      if(pulling||cur?.called){
         const x=cur?cur.x:sx,y=cur?cur.y:sy,dx=tip.x-x,dy=tip.y-y,d=Math.hypot(dx,dy);
-        if(d<165&&d>1){
-          const spd=clamp(460-d*1.1,210,460),step=Math.min(d,spd*dt);
-          this.pulledStars.set(i,{x:x+dx/d*step,y:y+dy/d*step});
+        if((cur?.called||d<165)&&d>1){
+          const spd=cur?.called?Math.min(960,530+d*.85):clamp(460-d*1.1,210,460),step=Math.min(d,spd*dt);
+          this.pulledStars.set(i,{x:x+dx/d*step,y:y+dy/d*step,called:!!cur?.called});
         }
       }else if(cur){
         const dx=sx-cur.x,dy=sy-cur.y,d=Math.hypot(dx,dy);
@@ -2316,6 +2370,9 @@ class Game{
             nova.trace(this,shot,from,landing);this.markSpell('impact','stone',shot.x,shot.y,sign(shot.vx),false);shot.hit=true;continue;
           }
         }
+      }else if(shot.starSide){
+        const arc=Math.sin(Math.PI*clamp(shot.age/shot.max,0,1));
+        shot.y=shot.startY+(shot.lane-shot.startY)*clamp(shot.age/.16,0,1)+shot.starSide*58*arc;
       }else if(shot.wave){
         const curve=Math.min(1,shot.age/.14);
         shot.y=shot.startY+(shot.lane-shot.startY)*curve+Math.sin(shot.age*15+shot.phase)*shot.wave;
@@ -2364,7 +2421,7 @@ class Game{
     }
     this.projectiles=this.projectiles.filter(s=>{
       if(!s.hit&&s.age<s.max)return true;
-      this.trails.push({path:s.path,kind:s.kind,heavy:s.heavy,super:s.super,ended:this.time,life:s.super?.42:s.heavy?.31:.24});
+      this.trails.push({path:s.path,kind:s.kind,heavy:s.heavy,super:s.super,auxiliary:s.auxiliary,ended:this.time,life:s.super?.42:s.heavy?.31:.24});
       if(!s.hit){
         if(s.contacted||s.cast.bloom||s.auxiliary)this.markSpell('fade',s.kind,s.x,s.y,sign(s.vx),s.heavy);
         else this.boltBurst(s,'terminal',s.x,s.y);
@@ -2597,7 +2654,7 @@ function hud(c,g,img,hot,v,input){
  const p=g.player,hpPop=g.hpPulse>0?1+.22*Math.sin(g.hpPulse/.36*Math.PI):1;
  for(let i=0;i<3;i++)icon(c,'heart',41+i*24,41,21*(i<p.hp?hpPop:1),i<p.hp?'#ff9c97':'#75657e');
  line(c,[108,32,108,51],'#a08b9d');
- if(p.form==='none')icon(c,'bell',128,41,20,abilities.none.color);
+ if(p.form==='none')sprite(c,img.atlas,'starPalm0',129,55,30);
  else sprite(c,img.atlas,p.form+'Wisp',129,52,24);
  label(c,abilities[p.form].name,145,42,15,cream);icon(c,'right',211,41,12,cream);
  hot.push({id:'abilityBook',x:a.left+109,y:top+16,w:117,h:51,label:'切换属性'});
@@ -2612,7 +2669,7 @@ function hud(c,g,img,hot,v,input){
  if(g.dashFraction>0)box(c,245,59,84*g.dashFraction,4,2,energyColor);
  if(p.charging&&p.charge>.04){
   const pct=Math.min(1,p.charge/superTime),sup=p.charge>=superTime,hvy=p.charge>=heavyTime;
-  const barCol=sup?'#ff9ee6':hvy?'#fff4a6':abilities[p.form].color;
+  const barCol=sup?(p.form==='none'?'#ffc36b':'#ff9ee6'):hvy?'#fff4a6':abilities[p.form].color;
   box(c,19,70,207,10,5,'rgba(32,26,48,.86)',barCol);
   box(c,21,72,Math.max(4,203*pct),6,3,barCol);
   line(c,[21+203*(heavyTime/superTime),70,21+203*(heavyTime/superTime),80],'#fff8d6',1.6);
@@ -2675,7 +2732,8 @@ function journal(c,g,img,hot){
   else if(seen&&g.player.dash>0)label(c,'冲刺中',x+115,419,15,'#b4a8b3','center');
   else if(seen){button(c,hot,'wear-'+k,x+47,397,137,40,'装备'+a.name,true,true);Object.assign(hot[hot.length-1],{x,y:175,w:231,h:275});}
  });
- if(g.player.form!=='none'&&g.player.dash<=0)button(c,hot,'wear-none',550,122,169,36,'换回旅行装',false,true);}
+ if(g.player.form==='none')label(c,'旅行装 · '+abilities.none.note,480,471,14,cream,'center');
+ else if(g.player.dash<=0)button(c,hot,'wear-none',550,122,169,36,'换回旅行装',false,true);}
  else{Object.keys(species).forEach((k,i)=>{const a=species[k],seen=g.data.book.includes(k),x=115+(i%3)*247,y=171+Math.floor(i/3)*89;
   box(c,x,y,232,78,10,'#40354e','#62566b');c.save();c.globalAlpha=seen?1:.22;sprite(c,img.atlas,a.rare?'moth':k,x+38,y+60,k==='elder'?48:37);c.restore();label(c,seen?a.name:'未发现',x+73,y+24,16,seen?a.color:'#c0b3c2');wrap(c,seen?a.note:'还有一页等着被填满。',x+73,y+44,151,12,'#e4d6d6',15);});}
 }
@@ -2999,7 +3057,7 @@ module.exports={
 // All coordinates are world pixels. Platforms are [left, top, width, thickness].
 // Spawn, monster and pickup positions use feet or object centers as documented.
 const abilities = {
-  none: {name:'旅行装', color:'#ffe09a', note:'长按共鸣吸收属性与星章，长蓄释出星铃极光。'},
+  none: {name:'旅行装', color:'#ffd479', note:'点按发射星弹，蓄满放出三颗流星。星爆能引回星章，攒三颗就能踏星冲刺。'},
   fire: {name:'绯焰', color:'#ff9969', note:'按住攻击举起火焰，蓄满松手放出凤凰。冲刺时骑乘凤凰，冲击波自动击败沿途敌人。'},
   wind: {name:'流羽', color:'#91eee1', note:'长蓄卷出三连苍穹飓风，平时按住跳跃可滑翔，冲刺中由冲击波迎敌。'},
   stone: {name:'苔岩', color:'#e8c68b', note:'长蓄裂出五道星陨晶柱，空中震地碎敌，岩盾弹反。'}
@@ -3293,6 +3351,7 @@ const frames=require('./art');
 const {glint,colors}=require('./power-fx');
 const {wash,streak}=require('./light');
 const {bloomAxes,bloomTime}=require('./spell-range');
+const starMagic=require('./star-magic');
 const tau=2*Math.PI,clamp=n=>Math.max(0,Math.min(1,n));
 const ease=n=>1-Math.pow(1-clamp(n),3);
 const palette={
@@ -3314,7 +3373,8 @@ function addParticle(g,p){
 function scatter(g,f){
  if(f.type==='fade')return;
  const rnd=randomFor(f.seed),muzzle=f.type==='release',earth=f.type==='ground',end=f.type==='terminal',sup=!!f.super;
- const count=muzzle?(sup?12:f.heavy?10:7):sup?(end?28:38):f.heavy?(end?22:28):16;
+ const count=f.kind==='none'?(muzzle?6:sup?17:f.heavy?13:9):
+  muzzle?(sup?12:f.heavy?10:7):sup?(end?28:38):f.heavy?(end?22:28):16;
  for(let i=0;i<count;i++){
   const shape=i%7===0?'Cloud':i%3===0?'Streak':i%3===1?'Shard':'ember';
   const a=muzzle?(f.face<0?Math.PI:0)+(rnd()-.5)*2.35:earth?-Math.PI*(.045+.91*rnd()):tau*(i+rnd()*.84)/count;
@@ -3332,7 +3392,7 @@ function scatter(g,f){
 // Emit along the distance the head actually travelled, including curved launches and low refresh rates.
 function trace(g,s,a,b){
  const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);if(!d)return;
- const step=s.heavy?17:22,angle=Math.atan2(dy,dx),nx=-dy/d,ny=dx/d;
+ const step=s.kind==='none'?(s.auxiliary?44:32):s.heavy?17:22,angle=Math.atan2(dy,dx),nx=-dy/d,ny=dx/d;
  let next=step-s.trailDistance;
  while(next<=d){
   const u=next/d,n=++s.trailIndex,wave=Math.sin(n*2.399),spread=(s.heavy?14:8)*wave;
@@ -3371,7 +3431,7 @@ function sizeOf(f){
 function exposure(c,g,v){
  let winner,strength=0;
  for(const f of g.spellEffects){
-  if(!f.heavy||!['impact','ground','terminal'].includes(f.type)||f.x<g.camera-50||f.x>g.camera+v.width+50)continue;
+  if(f.kind==='none'||!f.heavy||!['impact','ground','terminal'].includes(f.type)||f.x<g.camera-50||f.x>g.camera+v.width+50)continue;
   const attack=ease((f.age+.012)/.065),fall=1-ease((f.age-.06)/.38);
   const light=attack*fall*(f.type==='terminal'?.56:1);
   if(light>strength){strength=light;winner=f;}
@@ -3491,7 +3551,10 @@ function paintParticles(c,stamp,img,g,clouds){
   if(fade<=.01)continue;
   const col=palette[p.kind],h=p.size*(clouds?.46+1.48*ease(u):.58+.42*open)*(clouds?1:1-.40*u);
   c.save();c.globalAlpha*=open*fade*(clouds?.24:p.shape==='Shard'?.80:.86);
-  if(p.shape==='ember'){
+  if(p.kind==='none'){
+   if(p.shape==='Shard')starMagic.spark(c,img,p.x,p.y,h*1.24,p.age,p.angle,.92);
+   else stamp(c,img,clouds?'rushEmber1':p.shape==='ember'?'rushSpark0':'rushSpark1',p.x,p.y,h*(clouds?1.4:1.12),1,p.angle);
+  }else if(p.shape==='ember'){
    const dx=p.vx*.028,dy=p.vy*.028;c.beginPath();c.moveTo(p.x-dx,p.y-dy);c.lineTo(p.x,p.y);
    c.strokeStyle=rgba(col.body,.96);c.lineWidth=h*.66;c.stroke();glint(c,p.x,p.y,h,p.angle,col.hot);
   }else if(p.shape==='Streak'&&p.size>10){
@@ -3521,6 +3584,7 @@ const light=require('./light');
 const kirbyFX=require('./kirby-fx');
 const aura=require('./attunement'),resonance=require('./resonance');
 const phoenix=require('./phoenix-rush');
+const starMagic=require('./star-magic');
 const riding=require('./riding');
 const characterLight=require('./character-light');
 const {drawRegistered,visibleWand}=require('./actor-pose');
@@ -3911,6 +3975,7 @@ function hero(c,g,imgs){
  if(!riding.draw(c,imgs.atlas,p,t)){
   const light=characterLight.source(g,tip,p.bell?bellTip(p):null);
   characterLight.draw(c,imgs,p,light,dest=>{
+   if(p.dash>0&&p.form==='none'){starMagic.ride(dest,imgs.atlas,starMagic.surfPose(p,t));return;}
    if(!drawRegistered(dest,imgs,texture,p,face))sprite(dest,imgs.atlas,id,p.x,p.y+1,height,face,angle,sy*(1+bounce-.085*contact+.035*stretch+(idle?.008*Math.sin(t*2.8):0)),sx*(1+.075*contact-.023*stretch),shear-gait*.036*Math.min(1,Math.abs(p.vx)/250));
   });
  }
@@ -3922,16 +3987,26 @@ function hero(c,g,imgs){
 }
 function clamp01(x){return Math.max(0,Math.min(1,x));}
 const boltSize={none:16,fire:23,wind:25,stone:21};
-function effects(c,g,img){
+function cometTrail(c,path,t,img,surface,height,alpha){
+ if(path.length<2)return;
+ const face=path[path.length-1].x>=path[0].x?1:-1;
+ c.save();c.globalAlpha*=alpha;phoenix.wake(c,path,t,img,'none',face,surface,height);c.restore();
+}
+function effects(c,g,img,surface){
  for(const end of g.trails){
   const left=clamp01(1-(g.time-end.ended)/end.life);
   const tail=end.path.slice(Math.floor((1-left)*(end.path.length-1)));
+  if(end.kind==='none'){cometTrail(c,tail,g.time,img,surface,end.auxiliary?22:end.heavy?49:26,left*.79);continue;}
   powerFX.trail(c,tail,end.kind,end.heavy,g.time,.88*left,end.super);nova.wake(c,tail,end.kind,end.heavy,g.time,left);
  }
  for(const f of g.spellEffects){
   const u=clamp01(f.age/f.life),rise=Math.sin(Math.min(1,u*4)*Math.PI/2);
   c.save();c.globalAlpha=f.type==='impact'?1:1-Math.pow(u,1.6);
   if(f.type==='ground'||f.type==='terminal'){c.restore();continue;}
+  if(f.kind==='none'){
+   if(f.type==='release'||f.type==='fade')starMagic.burst(c,img,f);
+   c.restore();continue;
+  }
   if(f.type==='release'){
    powerFX.release(c,spellSprite,img,f);
   }else if(f.type==='fade'){
@@ -3946,6 +4021,10 @@ function effects(c,g,img){
   c.restore();
  }
  for(const shot of g.projectiles){
+  if(shot.kind==='none'){
+   cometTrail(c,shot.path,g.time,img,surface,shot.auxiliary?22:shot.heavy?49:26,shot.auxiliary?.54:.85);
+   starMagic.projectile(c,img,shot);continue;
+  }
   const face=Math.sign(shot.vx),u=clamp01(shot.age/shot.max);
   const h=boltSize[shot.kind]*(shot.super?2.55:shot.heavy?2.15:1.18)*(.76+.24*Math.min(1,shot.age/.055));
   c.save();c.globalAlpha=Math.min(1,.35+(1-u)*5)*(shot.auxiliary?.35:1);
@@ -4012,11 +4091,13 @@ function world(c,g,imgs,v=standard){
  }
  fieldObjects(c,g,imgs);powerFX.backlight(c,g,v);nova.exposure(c,g,v);
  for(const f of g.spellEffects)if(['impact','ground','terminal'].includes(f.type)){
+  if(f.kind==='none'){starMagic.burst(c,imgs.atlas,f);continue;}
   nova.blast(c,spellSprite,imgs.atlas,f);
   powerFX.impact(c,spellSprite,imgs.atlas,f);
  }
  nova.paintParticles(c,spellSprite,imgs.atlas,g,true);
  for(const f of g.footEffects){
+  if(f.type==='starLift'){starMagic.launch(c,imgs.atlas,f);continue;}
   if(f.type==='fireLift'){phoenix.takeoff(c,f,imgs.atlas);continue;}
   const u=f.age/f.life,id='puff'+Math.min(3,Math.floor(u*4));
   const drift=f.type==='land'?0:-f.face*u*(f.type==='brake'?19:11);
@@ -4025,7 +4106,7 @@ function world(c,g,imgs,v=standard){
  }
  for(const f of g.spellEffects)if(f.type==='ground')powerFX.groundCrests(c,spellSprite,imgs.atlas,f);
  for(const echo of g.echoes){
-  if(echo.boost&&echo.form==='fire')continue;
+  if(echo.boost&&(echo.form==='fire'||echo.form==='none'))continue;
   const u=clamp01((g.time-echo.born)/(echo.boost?.23:echo.life));if(u<.05||u>=1)continue;
   const height=frameHeight(echo.id);
   const [sx,sy,shear]=echo.shape,th=kirbyFX.themes[echo.form]||kirbyFX.themes.none;
@@ -4037,7 +4118,7 @@ function world(c,g,imgs,v=standard){
   sprite(c,imgs.atlas,echo.id,echo.x,echo.y+1,height,echo.face,0,sy,sx,shear);
   spellSprite(c,imgs.atlas,echo.form+'Charge',echo.x-echo.face*13,echo.y-height*.42,22*(1-u),echo.face,u*1.8);c.restore();
  }
- aura.rushWake(c,g,imgs.atlas,imgs.wakeSurface);aura.rushPressure(c,g,imgs.atlas);phoenix.motes(c,g,imgs.atlas);effects(c,g,imgs.atlas);nova.paintParticles(c,spellSprite,imgs.atlas,g,false);
+ aura.rushWake(c,g,imgs.atlas,imgs.wakeSurface);aura.rushPressure(c,g,imgs.atlas);phoenix.motes(c,g,imgs.atlas);effects(c,g,imgs.atlas,imgs.wakeSurface);nova.paintParticles(c,spellSprite,imgs.atlas,g,false);
  bodyLight(c,g,imgs);tree(c,g,imgs);friends(c,g,imgs);enemyProjectiles(c,g,imgs);hero(c,g,imgs);struckCreatures(c,g,imgs);
  kirbyFX.popups(c,g,v);
  c.restore();
@@ -4051,11 +4132,13 @@ module.exports={box,line,oval,glow,star,label,wrap,sprite,icon,horizon,terrain,w
 const art=require('./art-rush');
 const {smooth}=require('./resonance');
 const wave=require('./dash-wave');
+const starMagic=require('./star-magic');
 const moteArt=['rushEmber0','rushEmber1','rushSpark0','rushSpark1'];
 
 function pressure(c,g,atlas){
   const p=g.player;
   if(p.dash<=0)return;
+  if(p.form==='none'){starMagic.pressure(c,g,atlas);return;}
   const t=g.time-p.dashBorn,gain=.51+.49*smooth(t/.13)*smooth(p.dash/.18);
   const swell=.5-.5*Math.cos(t*Math.PI*2/1.12);
   const {width,height,x,y,angle,originY,face}=wave.shape(p,t);
@@ -4070,14 +4153,15 @@ function pressure(c,g,atlas){
   c.drawImage(atlas.lights,...art.fireSurfaceLight,x-width*.81,y-height*.47,width,height);c.restore();
 }
 
-const trailArt={none:'fireRushWake',fire:'fireRushWake',wind:'windRushWake',stone:'stoneRushWake'};
-function wake(c,points,t,atlas,form,face,surface){
+const trailArt={none:'starWake',fire:'fireRushWake',wind:'windRushWake',stone:'stoneRushWake'};
+function wake(c,points,t,atlas,form,face,surface,trailHeight){
+  if(!atlas?.lights||points.length<2)return;
   const last=points[points.length-1];
   if(last.heat<=.005)return;
   const flow=points.map((p,i)=>{
     if(i===0||i===points.length-1)return p;
     const a=points[i-1],b=points[i+1];
-    const drift=(1-p.heat)*Math.sin(p.x*.017-t*2.7)*3.4;
+    const drift=(1-(p.heat??1))*Math.sin(p.x*.017-t*2.7)*3.4;
     return {...p,x:p.x*.64+(a.x+b.x)*.18,y:p.y*.64+(a.y+b.y)*.18+drift};
   });
   const lengths=[0],first=flow[0];
@@ -4085,7 +4169,7 @@ function wake(c,points,t,atlas,form,face,surface){
   const span=lengths[lengths.length-1];
   if(span<3)return;
   const [sx,sy,sw,sh]=art[trailArt[form]];
-  const height=(form==='fire'?113:65)*(1+.032*Math.sin(t*4.6))*Math.min(1,.38+span/145);
+  const height=(trailHeight??(form==='fire'?113:form==='none'?96:65))*(1+.032*Math.sin(t*4.6))*Math.min(1,.38+span/145);
   const dx=last.x-first.x,dy=last.y-first.y,spanAxis=Math.hypot(dx,dy);
   // Parallel cross-sections meet at every real path sample, even on a steep takeoff.
   const nx=spanAxis>1?-dy/spanAxis*face:0,ny=spanAxis>1?Math.abs(dx)/spanAxis:1;
@@ -4096,7 +4180,7 @@ function wake(c,points,t,atlas,form,face,surface){
     const v=u/join;
     return sw*.89*(v+.015*Math.sin(Math.PI*v)*Math.sin(v*6-t*3.9));
   }
-  const gain=.97*smooth(last.heat),ink=surface?surface.getContext('2d'):c;
+  const gain=.97*smooth(last.heat??1),ink=surface?surface.getContext('2d'):c;
   let left,top,width,heightPx;
   if(surface){
     const xs=flow.map(q=>q.x),ys=flow.map(q=>q.y);
@@ -4137,7 +4221,9 @@ function motes(c,g,atlas){
     const beat=.78+.22*Math.sin(m.phase+age*8),size=m.size*(1-.22*u);
     c.save();c.translate(m.x+m.vx*age,m.y+m.vy*age-9*age*age);
     c.rotate(m.angle+m.spin*age);c.globalAlpha*=fade*beat;
-    c.drawImage(atlas.lights,...art[moteArt[m.variant]],-size/2,-size/2,size,size);c.restore();
+    if(m.form==='none')starMagic.spark(c,atlas,0,0,size*(m.variant<2?.64:1),age+m.phase,0,.94);
+    else c.drawImage(atlas.lights,...art[moteArt[m.variant]],-size/2,-size/2,size,size);
+    c.restore();
   }
 }
 
@@ -4186,7 +4272,7 @@ function flightCrest(c,stamp,img,s){
  const travel=Math.abs(s.x-s.path[0].x);
  if(s.auxiliary&&!s.arc){
   const prev=s.path[Math.max(0,s.path.length-2)],a=Math.atan2(s.y-prev.y,Math.abs(s.x-prev.x));
-  const id=s.kind==='none'?'noneStreak':s.kind+'Wake';
+  const id=s.kind+'Wake';
   stamp(c,img,id,s.x,s.y,18+11*u,face,a,.92,.5);return;
  }
  if(s.kind==='fire'){
@@ -4205,13 +4291,6 @@ function flightCrest(c,stamp,img,s){
    crest(c,stamp,img,'wind',.55+.45*Math.sin(arc),s.x-face*(10+span*.35),s.y+Math.sin(arc)*span,
      (56+146*u)*sup,face,Math.cos(arc)*.48,.86,.51);
   }
- }else if(s.kind==='none'){
-  const rings=s.super&&!s.auxiliary?4:2;
-  for(let i=rings;i>0;i--){
-   const r=(16+13*i)*u*sup;
-   arcBlade(c,s.x-face*i*21,s.y,r*.53,r,-.16*face,age*7+i,5.05,4.5+i,colors.none[i%3+1]);
-  }
-  crest(c,stamp,img,'none',u,s.x,s.y,(60+118*u)*sup,face,.15*Math.sin(age*16),.74,.50);
  }else if(s.kind==='stone'&&s.arc){
   stamp(c,img,'stoneShard',s.x,s.y,44*sup,face,age*14);
  }
@@ -4219,11 +4298,11 @@ function flightCrest(c,stamp,img,s){
 
 function backlight(c,g,v){
  const p=g.player;
- let strength=p.charging?smooth((p.charge-.19)/.28)*.69:0;
+ let strength=p.charging&&p.form!=='none'?smooth((p.charge-.19)/.28)*.69:0;
  let x=p.x,y=p.y-50,kind=p.form;
- if(p.castHeavy&&p.attack>0)strength=Math.max(strength,.82*p.attack/.38);
+ if(p.form!=='none'&&p.castHeavy&&p.attack>0)strength=Math.max(strength,.82*p.attack/.38);
  for(const f of g.spellEffects){
-  if(!f.heavy||(f.type!=='impact'&&f.type!=='ground'&&f.type!=='terminal')||f.x<g.camera-32||f.x>g.camera+v.width+32)continue;
+  if(f.kind==='none'||!f.heavy||(f.type!=='impact'&&f.type!=='ground'&&f.type!=='terminal')||f.x<g.camera-32||f.x>g.camera+v.width+32)continue;
   const light=(f.type==='terminal'?.55:1)*(1-smooth((f.age-.13)/.44));
   if(light>strength){strength=light;x=f.x;y=f.y-(f.type==='ground'?62:0);kind=f.kind;}
  }
@@ -4246,21 +4325,6 @@ function glint(c,x,y,r,t,color){
  c.quadraticCurveTo(-r*.12,r*.12,-r*.68,0);c.quadraticCurveTo(-r*.08,-r*.15,0,-r);
  c.fillStyle=color;c.fill();c.restore();
 }
-
-// A tapered arc has mass at the middle and pointed ends, even against pale clouds.
-function arcBlade(c,x,y,rx,ry,rotation,from,span,width,color){
- if(width<=0||rx<1||ry<1)return;
- c.save();c.translate(x,y);c.rotate(rotation);c.beginPath();
- const steps=14;
- for(let side=0;side<2;side++)for(let i=0;i<=steps;i++){
-  const u=(side?steps-i:i)/steps,a=from+span*u;
-  const d=(side?-.5:.5)*width*Math.sin(Math.PI*u);
-  const xx=(rx+d)*Math.cos(a),yy=(ry+d)*Math.sin(a);
-  if(!side&&!i)c.moveTo(xx,yy);else c.lineTo(xx,yy);
- }
- c.closePath();c.fillStyle=color;c.fill();c.restore();
-}
-
 
 // The leading point is sampled by the simulation. Only the trailing ribbon ripples.
 function trail(c,path,kind,heavy,clock,opacity=1,superCast=false){
@@ -4465,12 +4529,14 @@ module.exports={mounted,pose,draw};
 'use strict';
 const {pose}=require('./riding');
 const {smooth}=require('./resonance');
+const starMagic=require('./star-magic');
 
 const lifetime=1.36;
 
 // Sample the feather root in world coordinates, including the brief lift from the takeoff point.
 function anchor(g){
   const p=g.player,face=p.dashFace;
+  if(p.form==='none')return starMagic.root(p,g.time);
   if(p.form!=='fire')return {x:p.x-face*16,y:p.y-26};
   const r=pose(p,g.time),c=Math.cos(r.angle),s=Math.sin(r.angle);
   const x=p.x+face*(-38*c-12*s),y=p.y+r.lift-38*s+12*c;
@@ -4496,7 +4562,7 @@ function updateMotes(g,fromX,fromY){
   const x=shoulder?p.x+face*(24+random()*31):root.x-face*(random()*33);
   const y=shoulder?p.y-(p.form==='fire'?73:33)+side*(20+random()*16):root.y+(random()-.50)*44;
   const kind=random(),variant=kind<.36?0:kind<.73?1:kind<.87?2:3;
-  g.dashMotes.push({born:time,life:.78+.47*random(),x,y,variant,
+  g.dashMotes.push({born:time,life:.78+.47*random(),x,y,variant,form:p.form,
     vx:-face*(14+34*random()),vy:-5+side*(9+20*random()),angle:(random()-.5)*1.35,
     spin:(random()-.5)*1.05,size:(variant<2?17:22)+8*random(),phase:random()*Math.PI*2});
 }
@@ -4510,7 +4576,7 @@ module.exports={anchor,lifetime,updateMotes};
 const reach={none:[480,710],fire:[590,820],wind:[640,880]};
 const fields={none:[[145,90],[218,133]],fire:[[166,100],[242,146]],wind:[[152,120],[222,170]]};
 function boltReach(kind,heavy,superCast){
-  return heavy?reach[kind][superCast?1:0]:kind==='none'?91:360;
+  return heavy?reach[kind][superCast?1:0]:kind==='none'?260:360;
 }
 const bloomTime=.26;
 function bloomAxes(f){
@@ -4521,6 +4587,98 @@ function bloomAxes(f){
 function quakeLimit(f){return (f.super?420:290)+Math.min(50,(f.drop||0)*.25);}
 function quakeSpan(f){return Math.min(quakeLimit(f),20+f.age*(f.super?1030:950));}
 module.exports={boltReach,bloomTime,bloomAxes,quakeSpan,quakeLimit};
+
+},
+"star-magic": function(require,module,exports){
+'use strict';
+const frames = require('./art-rush');
+const {smooth} = require('./resonance');
+const {heavyTime,superTime} = require('./motion');
+const {bloomAxes} = require('./spell-range');
+const wave = require('./dash-wave');
+
+function picture(c,atlas,id,x,y,width,height,face=1,angle=0,alpha=1,ax=.5,ay=.5) {
+  if (!atlas?.lights || alpha<.008 || width<=0 || height<=0) return;
+  c.save();c.translate(x,y);c.scale(face,1);c.rotate(angle);c.globalAlpha*=alpha;
+  c.drawImage(atlas.lights,...frames[id],-width*ax,-height*ay,width,height);
+  c.restore();
+}
+const phase = time => Math.floor(time*10)%4;
+function spark(c,atlas,x,y,size,time,angle,alpha) {
+  picture(c,atlas,'starPalm'+phase(time),x,y,size,size,1,angle,alpha);
+}
+
+function palm(c,atlas,p,tip,t,front) {
+  const face=p.chargeFace, gather=smooth(p.charge/heavyTime);
+  const focus=smooth((p.charge-heavyTime)/(superTime-heavyTime));
+  const full=p.charge>=superTime, open=smooth((p.charge-superTime)/.14);
+  const beat=.5-.5*Math.cos(t*7), height=12+21*gather+28*focus+34*open+beat*(2+5*focus);
+  const cx=tip.x+face*(4+focus*5),cy=tip.y-height*.28;
+  if (front) {
+    spark(c,atlas,tip.x,tip.y,7+6*gather+5*open,t,-.18,.92);
+    return;
+  }
+  picture(c,atlas,'starPalm'+phase(t),cx,cy,height,height,face,.055*Math.sin(t*6));
+  const count=full?4:p.charge>=heavyTime?2:3;
+  for(let i=0;i<count;i++){
+    const u=(t*1.25+i/count)%1,angle=t*(full?2.2:2.9)+i*Math.PI*2/count;
+    const distance=full?height*(.40+.05*Math.sin(angle)):p.charge>=heavyTime?height*.46:27*(1-u);
+    const x=cx+Math.cos(angle)*distance,y=cy+Math.sin(angle)*distance*.72;
+    spark(c,atlas,x,y,full?11+5*beat:5+5*gather,t+i,angle*.14,full?.9:gather*.85);
+  }
+}
+
+function projectile(c,atlas,shot) {
+  const face=Math.sign(shot.vx),prev=shot.path[Math.max(0,shot.path.length-2)];
+  const angle=Math.atan2(shot.y-prev.y,Math.max(.1,Math.abs(shot.x-prev.x)));
+  const size=(shot.auxiliary?45:shot.super?103:shot.heavy?72:43)*(.80+.20*smooth(shot.age/.07));
+  picture(c,atlas,'starComet'+phase(shot.age),shot.x,shot.y,size,size,face,angle,shot.auxiliary?.91:1,.69,.49);
+}
+
+function burst(c,atlas,f) {
+  const u=Math.min(1,f.age/f.life),release=f.type==='release',fade=f.type==='fade';
+  if(release||fade){
+    const size=(f.super?76:f.heavy?54:33)*(.72+.46*smooth(u/.45));
+    picture(c,atlas,'starPalm'+phase(f.age),f.x,f.y,size,size,f.face,.15*u,1-smooth(u));
+    return;
+  }
+  // The expanding star fragments reach the same ellipse that tests enemies and nearby pickups.
+  const [rx,ry]=f.heavy?bloomAxes(f):[38+23*smooth(u/.45),32+15*smooth(u/.45)];
+  const progress=Math.min(3,f.age/(f.heavy?.46:.30)*3);
+  const index=Math.floor(progress),mix=progress-index;
+  const alpha=(1-smooth((u-.54)/.46))*(f.type==='terminal'?.84:.96);
+  const width=rx*2.17,height=ry*2.17;
+  picture(c,atlas,'starBloom'+index,f.x,f.y,width,height,f.face,0,alpha*(1-mix));
+  if(mix>0)picture(c,atlas,'starBloom'+(index+1),f.x,f.y,width,height,f.face,0,alpha*mix);
+  if(f.age<.16)spark(c,atlas,f.x,f.y,f.heavy?65:34,f.age,-.18,1-smooth(f.age/.16));
+}
+
+function surfPose(p,time) {
+  const age=Math.max(0,time-p.dashBorn),angle=wave.pitch(p)*.56;
+  return {x:p.x,y:p.y-23+1.7*Math.sin(age*10),face:p.dashFace,angle,
+    id:'starRide'+Math.floor(age*11)%6};
+}
+function ride(c,atlas,pose) {
+  picture(c,atlas,pose.id,pose.x,pose.y,111,121,pose.face,pose.angle,1,.5,368/496);
+}
+function root(p,time) {
+  const r=surfPose(p,time);
+  return {x:r.x-r.face*26*Math.cos(r.angle),y:r.y-26*Math.sin(r.angle)};
+}
+function pressure(c,g,atlas) {
+  const p=g.player,t=g.time-p.dashBorn,shape=wave.shape(p,t);
+  const pulse=.5-.5*Math.cos(t*6.4);
+  c.save();c.translate(p.x,p.y+shape.originY);c.scale(shape.face,1);c.rotate(shape.angle);
+  const gain=.50+.50*smooth(t/.13)*smooth(p.dash/.17);
+  picture(c,atlas,'starBow',shape.x,shape.y,shape.width*(1.20+.045*pulse),
+    shape.height*(1.31+.09*pulse),1,0,gain,.738,.528);
+  c.restore();
+}
+function launch(c,atlas,f) {
+  const u=f.age/f.life,open=smooth(u/.42),size=28+62*open;
+  picture(c,atlas,'starBloom'+Math.min(3,Math.floor(u*4)),f.x,f.y-5,size,size*.53,f.face,0,1-smooth(u));
+}
+module.exports={palm,projectile,burst,spark,surfPose,ride,root,pressure,launch};
 
 },
 "touch-hud": function(require,module,exports){
@@ -4577,7 +4735,9 @@ function touchHud(c,hot,g,img,v,input={}){
       }
     }else if(progress>0)arc(c,0,0,r-4*u,top,top+tau*Math.min(1,progress),color,3.5*u);
     if(key==='attack'&&img.atlas){
-      sprite(c,img.atlas,p.form+'Charge',0,r*.18,r*.83);
+      sprite(c,img.atlas,p.form==='none'?'starPalm0':p.form+'Charge',0,r*.18,r*.83);
+    }else if(key==='dash'&&p.form==='none'&&img.atlas){
+      sprite(c,img.atlas,'starComet0',-r*.09,r*.25,r*.98);
     }else if(key==='jump'&&img.atlas){
       icon(c,'jump',r*.24,-r*.26,r*.66,color);
       sprite(c,img.atlas,p.form+'3',-r*.14,r*.17,r*.86);
