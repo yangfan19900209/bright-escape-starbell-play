@@ -688,6 +688,9 @@ module.exports = {
   "starHeart1": [788, 712, 160, 160],
   "starHeart2": [956, 712, 160, 160],
   "starHeart3": [1124, 712, 160, 160],
+  "starMoonBlue": [196, 1683, 184, 56],
+  "starMoonGold": [4, 1683, 184, 60],
+  "starOrbitAir": [388, 1683, 208, 76],
   "starPalm0": [620, 4, 128, 128],
   "starPalm1": [756, 4, 128, 128],
   "starPalm2": [892, 4, 128, 128],
@@ -703,6 +706,15 @@ module.exports = {
   "starRide4": [808, 1827, 180, 166],
   "starRide5": [996, 1827, 180, 166],
   "starSeed": [740, 1503, 142, 142],
+  "starTurn0": [4, 1155, 168, 168],
+  "starTurn1": [180, 1155, 168, 168],
+  "starTurn2": [356, 1155, 168, 168],
+  "starTurn3": [4, 1331, 168, 168],
+  "starTurn4": [180, 1331, 168, 168],
+  "starTurn5": [356, 1331, 168, 168],
+  "starTurn6": [4, 1507, 168, 168],
+  "starTurn7": [180, 1507, 168, 168],
+  "starTurn8": [356, 1507, 168, 168],
   "starWake": [620, 1111, 608, 178],
   "stoneRushWake": [4, 717, 448, 150],
   "windRushWake": [4, 559, 448, 150]
@@ -4180,28 +4192,88 @@ function pressure(c,g,atlas){
 }
 
 const trailArt={none:'starWake',fire:'fireRushWake',wind:'windRushWake',stone:'stoneRushWake'};
+// Each edge belongs to both adjacent sections. A vertical climb at a gate still has a full-width wake.
+function starEdges(flow,height,face){
+  const tangents=[];
+  for(let i=1;i<flow.length;i++){
+    const dx=flow[i].x-flow[i-1].x,dy=flow[i].y-flow[i-1].y,d=Math.hypot(dx,dy)||1;
+    tangents.push({x:dx/d,y:dy/d,d});
+  }
+  return flow.map((point,i)=>{
+    const a=tangents[Math.max(0,i-1)],b=tangents[Math.min(i,tangents.length-1)];
+    const sum=Math.hypot(a.x+b.x,a.y+b.y);
+    const tx=sum>.03?(a.x+b.x)/sum:b.x,ty=sum>.03?(a.y+b.y)/sum:b.y;
+    const bend=Math.sqrt(Math.max(0,(1-a.x*b.x-a.y*b.y)/2));
+    const half=Math.min(height*.5,Math.max(height*.22,(a.d+b.d)/Math.max(.02,4*bend)));
+    const nx=-ty*face*half,ny=tx*face*half;
+    return {top:{x:point.x-nx,y:point.y-ny},bottom:{x:point.x+nx,y:point.y+ny}};
+  });
+}
+function starQuad(ink,atlas,sx,sy,sw,sh,a,b){
+  const ta=a.top,ba=a.bottom,tb=b.top,bb=b.bottom;
+  const deltaX=(bb.x-tb.x)-(ba.x-ta.x),deltaY=(bb.y-tb.y)-(ba.y-ta.y);
+  // Straight sections use one affine draw. Tight bends share both vertices across a pair of triangles.
+  ink.save();
+  ink.transform(tb.x-ta.x,tb.y-ta.y,ba.x-ta.x,ba.y-ta.y,ta.x,ta.y);
+  const bent=Math.abs(deltaX)+Math.abs(deltaY)>.32;
+  if(bent){
+    ink.beginPath();ink.moveTo(0,0);ink.lineTo(1,0);ink.lineTo(0,1);ink.closePath();ink.clip();
+  }
+  ink.drawImage(atlas,sx,sy,sw,sh,0,0,1,1);ink.restore();
+  if(!bent)return;
+  ink.save();
+  ink.transform(bb.x-ba.x,bb.y-ba.y,bb.x-tb.x,bb.y-tb.y,tb.x+ba.x-bb.x,tb.y+ba.y-bb.y);
+  ink.beginPath();ink.moveTo(1,1);ink.lineTo(0,1);ink.lineTo(1,0);ink.closePath();ink.clip();
+  ink.drawImage(atlas,sx,sy,sw,sh,0,0,1,1);ink.restore();
+}
+function starSection(ink,atlas,sx,sy,sw,sh,a,b){
+  const middle=edge=>({x:(edge.top.x+edge.bottom.x)*.5,y:(edge.top.y+edge.bottom.y)*.5});
+  const spread=Math.abs((b.top.x-b.bottom.x)-(a.top.x-a.bottom.x))+
+    Math.abs((b.top.y-b.bottom.y)-(a.top.y-a.bottom.y));
+  if(spread<4){starQuad(ink,atlas,sx,sy,sw,sh,a,b);return;}
+  // Keep the bright centre on the flight path when the top and bottom edges turn at different speeds.
+  const ca=middle(a),cb=middle(b);
+  starQuad(ink,atlas,sx,sy,sw,sh*.5,{top:a.top,bottom:ca},{top:b.top,bottom:cb});
+  starQuad(ink,atlas,sx,sy+sh*.5,sw,sh*.5,{top:ca,bottom:a.bottom},{top:cb,bottom:b.bottom});
+}
 function wake(c,points,t,atlas,form,face,surface,trailHeight){
   if(!atlas?.lights||points.length<2)return;
   const last=points[points.length-1];
   if(last.heat<=.005)return;
-  const flow=points.map((p,i)=>{
+  let flow=points.map((p,i)=>{
     if(i===0||i===points.length-1)return p;
     const a=points[i-1],b=points[i+1];
     const drift=(1-(p.heat??1))*Math.sin(p.x*.017-t*2.7)*3.4;
     return {...p,x:p.x*.64+(a.x+b.x)*.18,y:p.y*.64+(a.y+b.y)*.18+drift};
   });
+  if(form==='none'&&trailHeight===undefined&&flow.length>2){
+    const rounded=[flow[0]];
+    for(let i=1;i+1<flow.length;i++){
+      const a=flow[i-1],p=flow[i],b=flow[i+1];
+      rounded.push({x:(a.x+p.x)*.5,y:(a.y+p.y)*.5},
+        {x:(a.x+6*p.x+b.x)/8,y:(a.y+6*p.y+b.y)/8});
+    }
+    const p=flow[flow.length-2];
+    rounded.push({x:(p.x+last.x)*.5,y:(p.y+last.y)*.5},last);
+    flow=rounded;
+  }
   const lengths=[0],first=flow[0];
   for(let i=1;i<flow.length;i++)lengths.push(lengths[i-1]+Math.hypot(flow[i].x-flow[i-1].x,flow[i].y-flow[i-1].y));
   const span=lengths[lengths.length-1];
   if(span<3)return;
   const [sx,sy,sw,sh]=art[trailArt[form]];
   const height=(trailHeight??(form==='fire'?113:form==='none'?137:65))*(1+.032*Math.sin(t*4.6))*Math.min(1,.38+span/145);
+  const edges=form==='none'&&trailHeight===undefined?starEdges(flow,height,face):null;
   const dx=last.x-first.x,dy=last.y-first.y,spanAxis=Math.hypot(dx,dy);
   // Parallel cross-sections meet at every real path sample, even on a steep takeoff.
   const nx=spanAxis>1?-dy/spanAxis*face:0,ny=spanAxis>1?Math.abs(dx)/spanAxis:1;
   // Keep the hot part within a few feathers of the root even when the flight path is very long.
   const join=1-Math.min(32/span,.22);
   function sample(u){
+    if(edges){
+      const end=.876+.124*smooth((1-(last.heat??1))/.30);
+      return sw*end*(u+.016*Math.sin(Math.PI*u)*Math.sin(u*6-t*3.9));
+    }
     if(u>join)return sw*(.89+.11*(u-join)/(1-join));
     const v=u/join;
     return sw*.89*(v+.015*Math.sin(Math.PI*v)*Math.sin(v*6-t*3.9));
@@ -4210,7 +4282,7 @@ function wake(c,points,t,atlas,form,face,surface,trailHeight){
   let left,top,width,heightPx;
   if(surface){
     const xs=flow.map(q=>q.x),ys=flow.map(q=>q.y);
-    const mx=Math.abs(nx)*height*.5+2,my=Math.abs(ny)*height*.5+2;
+    const mx=(edges?1:Math.abs(nx))*height*.5+2,my=(edges?1:Math.abs(ny))*height*.5+2;
     left=Math.floor(Math.min(...xs)-mx);top=Math.floor(Math.min(...ys)-my);
     width=Math.ceil(Math.max(...xs)+mx)-left;heightPx=Math.ceil(Math.max(...ys)+my)-top;
     if(surface.width<width)surface.width=Math.max(768,Math.ceil(width/128)*128);
@@ -4227,6 +4299,10 @@ function wake(c,points,t,atlas,form,face,surface,trailHeight){
     if(distance<.1)continue;
     const u=lengths[i-1]/span,v=lengths[i]/span;
     const start=sample(u),end=sample(v);
+    if(edges){
+      starSection(ink,atlas.lights,sx+start,sy,end-start,sh,edges[i-1],edges[i]);
+      continue;
+    }
     ink.save();
     ink.transform((b.x-a.x)/distance,(b.y-a.y)/distance,nx,ny,a.x,a.y);
     ink.drawImage(atlas.lights,sx+start,sy,end-start,sh,0,-height*.50,distance,height);
@@ -4648,9 +4724,9 @@ function spark(c,atlas,x,y,size,time,angle,alpha) {
 }
 
 // These are independently painted silhouettes. Broad light can overlap while their cores move.
-function cels(c,atlas,prefix,position,loop,x,y,w,h,face,angle,alpha) {
+function cels(c,atlas,prefix,position,loop,x,y,w,h,face,angle,alpha,count=4) {
   const step=Math.floor(position),mix=position-step;
-  const a=loop?step%4:Math.min(step,3),b=loop?(step+1)%4:Math.min(step+1,3);
+  const a=loop?step%count:Math.min(step,count-1),b=loop?(step+1)%count:Math.min(step+1,count-1);
   picture(c,atlas,prefix+a,x,y,w,h,face,angle,alpha*(1-mix));
   if(mix>.005)picture(c,atlas,prefix+b,x,y,w,h,face,angle,alpha*mix);
 }
@@ -4660,6 +4736,21 @@ function grain(c,atlas,variant,x,y,size,age,angle,alpha) {
   picture(c,atlas,grainArt[variant],x,y,size*turning,size,1,angle,alpha);
 }
 
+function satellites(c,atlas,x,y,span,t,face,energy,front){
+  for(let i=0;i<3;i++){
+    const a=t*(2.6+i*.13)+i*Math.PI*2/3,co=Math.cos(a),si=Math.sin(a);
+    if((si>0)!==front)continue;
+    const r=span*(.33+.041*i),dx=r*co,dy=r*(si*.39-co*.22);
+    const angle=Math.atan2(.39*co+.22*si,-si);
+    const closeness=.72+.28*(si+1)*.5,size=(40+39*energy)*closeness;
+    const twinkle=.76+.24*(.5+.5*Math.cos(t*7+i))**2;
+    const xx=x+face*dx,yy=y+dy;
+    picture(c,atlas,i===1?'starMoonBlue':'starMoonGold',xx,yy,size,size*.43,
+      face,angle,energy*closeness*twinkle,.816,i===1?.50:.526);
+    picture(c,atlas,'starGlint',xx,yy,size*.22,size*.22,1,-.12,energy*twinkle*.82);
+  }
+}
+
 function palm(c,atlas,p,tip,t,front) {
   const face=p.chargeFace||p.face, gather=smooth(p.charge/heavyTime);
   const focus=smooth((p.charge-heavyTime)/(superTime-heavyTime));
@@ -4667,32 +4758,33 @@ function palm(c,atlas,p,tip,t,front) {
   const flare=full?Math.sin(Math.PI*Math.min(1,fullAge/.24)):0;
   const beat=.5-.5*Math.cos(t*7.2);
   const span=17+34*gather+40*focus+91*open+19*flare+(2+7*open)*beat;
-  const cx=tip.x+face*(3+5*focus+23*open),cy=tip.y-span*.28;
+  const cx=tip.x+face*(3+5*focus+23*open),cy=tip.y-span*.23;
   if(front){
     picture(c,atlas,'starAir',tip.x,tip.y,22+36*focus,17+22*focus,1,0,.75);
     spark(c,atlas,tip.x,tip.y,9+12*gather+8*open,t,-.16,.98);
+    if(full)satellites(c,atlas,cx,cy,span,t,face,open, true);
     return;
   }
-  picture(c,atlas,'starAir',cx,cy,span*1.72,span*1.52,face,-.1,.65+.22*focus);
+  picture(c,atlas,'starAir',cx,cy,span*1.65,span*1.48,face,-.1,.62+.18*focus);
   if(p.ground)picture(c,atlas,'starAir',p.x+face*9,p.y-1,38+100*gather+61*open,10+18*gather,1,0,.50*gather);
-  if(p.charge>=heavyTime){
-    cels(c,atlas,'starPlasma',t*4.7,true,cx,cy,span,span,face,-.11+.065*Math.sin(t*4),.74+.26*focus);
-  }else spark(c,atlas,cx,cy,span,t,0,1);
+  if(p.charge>=heavyTime)picture(c,atlas,'starOrbitAir',cx,cy,span*1.06,span*.66,face,-.18,.43+.22*focus);
   if(full){
-    const coreY=cy+span*.07,knot=22+91*open+13*flare+6*beat;
-    const angle=Math.atan2(coreY-tip.y,(cx-tip.x)*face);
-    picture(c,atlas,'starCurrent',cx,coreY,span*.58,span*.21,face,angle,.94*open,.86,.53);
-    cels(c,atlas,'starHeart',t*5.3,true,cx,coreY,knot,knot,face,-.09+.13*Math.sin(t*3.6),1);
-    if(fullAge<.17)picture(c,atlas,'starSeed',cx,coreY,knot*1.12,knot*1.12,face,-.09,1-smooth(fullAge/.17));
-  }
-  // Grains converge to the bell before ignition, then break away from the rising plasma.
-  const count=full?11:p.charge>=heavyTime?7:4;
+    satellites(c,atlas,cx,cy,span,t,face,open,false);
+    const size=49+90*open+14*flare+6*beat;
+    const spin=t*8.5,step=Math.floor(spin);
+    // Hold each registered silhouette, then blend the brief sweep into the next painted facet.
+    const settled=step+smooth((spin-step-.60)/.40);
+    cels(c,atlas,'starTurn',settled,true,cx,cy,size,size,face,t*1.42,1,9);
+    const glitter=.5+.5*Math.sin(t*7.8),r=size*.19;
+    picture(c,atlas,'starGlint',cx+face*r*Math.cos(t*2.6),cy+r*Math.sin(t*2.6),9+14*glitter,9+14*glitter,1,-.17,.78*glitter);
+  }else spark(c,atlas,cx,cy,span,t,0,1);
+  const count=full?6:p.charge>=heavyTime?6:4;
   for(let i=0;i<count;i++){
     const u=(t*(.85+i*.043)+i*.381)%1,a=i*2.399+t*.75+(full?u:-u)*1.4;
-    const r=full?span*(.16+.42*u):(24+18*gather)*(1-u);
-    const x=cx+face*Math.cos(a)*r,y=cy+Math.sin(a)*r*.77-(full?20*u*u:0);
+    const r=full?span*(.24+.23*u):(24+18*gather)*(1-u);
+    const x=cx+face*Math.cos(a)*r,y=cy+Math.sin(a)*r*.66;
     const size=(i%3===0?15:10)*(1+.45*focus);
-    grain(c,atlas,i%4,x,y,size,t+i,a,.95*Math.sin(Math.PI*u)*gather);
+    picture(c,atlas,'starGlint',x,y,size,size,1,a*.14,.92*Math.sin(Math.PI*u)*gather);
   }
 }
 
